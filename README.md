@@ -197,6 +197,80 @@ number is visibly stale rather than quietly wrong.
 
 ---
 
+## What the board can and can't show you
+
+The board renders what the project's documents already record. There is no
+required document set and no minimum.
+
+- A project with a dated gate log gets a gate ladder, each gate carrying its
+  date and its outcome.
+- A project with an evidence document gets criteria that trace back to real
+  observations — the output that was actually seen, not a summary of it.
+- A project with neither still gets the spine of the board: what is true right
+  now, what is blocked and on what, and what changed since the last refresh.
+
+So a thin board is a finding about the documentation, not a setup step the
+reader skipped. Where nothing recorded proves a criterion, the board says
+`NOT RUN` against it. Where a named source is missing, the skill says which one
+and builds the board without that section. It reports the gap instead of closing
+it by inference — and *nobody wrote this down* is a more useful thing for an
+approver to read than a full-looking page assembled from guesses.
+
+Which is why **you should not write documents for the board.** A requirements
+file created to give the board something to point at is a file nobody maintains;
+within a month it is wrong, and the board, faithfully rendering it, is wrong
+with it. Sources should exist because the project needs them. The board only
+reads them.
+
+### A project with a different document set
+
+The four-document example above is the common shape, not the required one. This
+is a real config from a Python data project with no `docs/` directory, no design
+document, no requirements baseline and no automated test suite:
+
+```json
+{
+  "title": "Market Gauge Board",
+  "favicon": "🌡️",
+  "board_url": "https://claude.ai/code/artifact/...",
+  "gates": true,
+  "test_command": null,
+  "footer": "Weekly market-temperature gauge. Daily bars from a broker API, Python 3.12.",
+  "palette": {
+    "passed": "#2e7d4f", "provisional": "#b8860b",
+    "blocked": "#c0392b", "inert": "#8a8a8a", "accent": "#2b6cb0"
+  },
+  "sources": {
+    "control":   "CLAUDE.md",
+    "guide":     "README.md",
+    "procedure":  "RUN_SCAN.md",
+    "evidence":  "VALIDATION.md",
+    "archive":   "validation_archive/README.md"
+  }
+}
+```
+
+Three things it demonstrates:
+
+- **The `sources` keys are named after what each document actually is.**
+  `guide`, not `requirements`, because that file is a user guide. Calling it a
+  requirements baseline would be the first step toward a board that is
+  confidently wrong — the approver would read its contents as commitments the
+  project had made to itself.
+- **`test_command` is `null` because there is no suite to run.** The board
+  reports the manually-run figure and attributes it to the commit it was taken
+  at, rather than implying a green run that never happened.
+- **`gates` is still `true` without a G0/G1 ladder.** A gate is anything that
+  has to be passed before work proceeds. A numbered phase ladder is one form; a
+  rule applied to each new candidate before it is accepted is another, and
+  `"gates": true` is right for both.
+
+Setting `"gates": false` drops the ladder sections and replaces them with a
+single *Open work* section: what is in progress, what is blocked and on what,
+what is done since the last refresh.
+
+---
+
 ## Security
 
 Installing a skill from a stranger means letting their instructions steer an
