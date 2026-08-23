@@ -1,0 +1,22 @@
+# Per-repo board overrides — never publish a board URL from this repo.
+# (Kept here so the pattern travels with anyone who copies the skill.)
+.claude/gate-board.local.json
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+desktop.ini
+.DS_Store
+$RECYCLE.BIN/
+
+# Local scratch
+*.log
+tmp/
+scratch/
