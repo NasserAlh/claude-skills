@@ -1,0 +1,57 @@
+<Window x:Class="OpenOsk.HelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="OpenOSK Help"
+        Width="560"
+        Height="520"
+        MinWidth="400"
+        MinHeight="300"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        FontFamily="{StaticResource UiFont}"
+        FontSize="13"
+        Background="{DynamicResource WindowBackground}"
+        Foreground="{DynamicResource KeyForeground}">
+  <Window.Resources>
+    <Style TargetType="TextBlock">
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Margin" Value="0,0,0,8" />
+      <Setter Property="Foreground" Value="{DynamicResource KeyForeground}" />
+    </Style>
+    <Style x:Key="H" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Margin" Value="0,10,0,6" />
+    </Style>
+  </Window.Resources>
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="18,12">
+      <TextBlock FontSize="20" FontWeight="SemiBold" Text="OpenOSK" />
+      <TextBlock Text="An open-source on-screen keyboard. Click, hover or scan to type into whatever application is active. The keyboard never takes focus away from that application." />
+
+      <TextBlock Style="{StaticResource H}" Text="Typing" />
+      <TextBlock Text="• Click a key to type it. Hold it down to repeat, like a physical keyboard." />
+      <TextBlock Text="• Shift, Ctrl, Alt, Win and Fn are sticky: tap once to apply to the next key, tap twice to lock, tap again to release." />
+      <TextBlock Text="• Fn turns the number row into F1–F12." />
+      <TextBlock Text="• Key labels follow the input language of the application you are typing into." />
+      <TextBlock Text="• The word suggestions above the keys complete the word you are typing. Click one to insert it." />
+
+      <TextBlock Style="{StaticResource H}" Text="Command keys" />
+      <TextBlock Text="• Nav switches to a compact set of navigation keys; Gen switches back." />
+      <TextBlock Text="• Mv Up / Mv Dn move the keyboard to the top or bottom of the screen." />
+      <TextBlock Text="• Dock fixes the keyboard to the bottom edge and reserves that space so other windows are not covered. Press again to undock." />
+      <TextBlock Text="• Fade makes the keyboard translucent until you point at it." />
+      <TextBlock Text="• Options opens the settings; Help opens this page." />
+
+      <TextBlock Style="{StaticResource H}" Text="Hover and scan modes" />
+      <TextBlock Text="• Hover: point at a key and keep the pointer still; the bar under the key fills and the key is typed." />
+      <TextBlock Text="• Scan: rows are highlighted in turn. Press the scan key (Space by default) or click the keyboard to choose a row, then again to choose the key. Change the speed and the scan key in Options." />
+
+      <TextBlock Style="{StaticResource H}" Text="Privacy" />
+      <TextBlock Text="OpenOSK sends nothing anywhere. Settings and learned words live in %LOCALAPPDATA%\OpenOSK on this PC and you can delete them at any time." />
+
+      <TextBlock Style="{StaticResource H}" Text="Limitations" />
+      <TextBlock Text="Keys cannot be sent to applications running as administrator unless OpenOSK is also running as administrator. The Windows sign-in screen still uses the built-in keyboard." />
+    </StackPanel>
+  </ScrollViewer>
+</Window>

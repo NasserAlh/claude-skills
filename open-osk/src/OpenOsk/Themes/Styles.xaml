@@ -1,0 +1,161 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:OpenOsk.Controls"
+                    xmlns:k="clr-namespace:OpenOsk.Core.Keys;assembly=OpenOsk.Core">
+
+  <FontFamily x:Key="UiFont">Segoe UI Variable Text, Segoe UI, Arial</FontFamily>
+  <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+  <!-- One on-screen key -->
+  <Style TargetType="{x:Type c:KeyButton}">
+    <Setter Property="Margin" Value="2" />
+    <Setter Property="MinHeight" Value="20" />
+    <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+    <Setter Property="Background" Value="{DynamicResource KeyBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource KeyForeground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource KeyBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="SnapsToDevicePixels" Value="True" />
+    <Setter Property="UseLayoutRounding" Value="True" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type c:KeyButton}">
+          <Border x:Name="Root"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="4">
+            <Grid ClipToBounds="True">
+              <TextBlock Text="{TemplateBinding Label}"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         FontSize="{TemplateBinding FontSize}"
+                         TextTrimming="CharacterEllipsis"
+                         TextAlignment="Center" />
+              <TextBlock Text="{TemplateBinding SubLabel}"
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Top"
+                         Margin="0,1,5,0"
+                         Opacity="0.65"
+                         FontSize="{TemplateBinding SubFontSize}" />
+              <Rectangle x:Name="Dwell"
+                         Height="3"
+                         Margin="5,0,5,3"
+                         VerticalAlignment="Bottom"
+                         RadiusX="1.5"
+                         RadiusY="1.5"
+                         Fill="{DynamicResource AccentBrush}"
+                         RenderTransformOrigin="0,0.5">
+                <Rectangle.RenderTransform>
+                  <ScaleTransform ScaleX="{Binding DwellProgress, RelativeSource={RelativeSource TemplatedParent}}" />
+                </Rectangle.RenderTransform>
+              </Rectangle>
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="KeyKind" Value="{x:Static k:KeyKind.Action}">
+              <Setter TargetName="Root" Property="Background" Value="{DynamicResource ActionKeyBackground}" />
+            </Trigger>
+            <Trigger Property="KeyKind" Value="{x:Static k:KeyKind.Modifier}">
+              <Setter TargetName="Root" Property="Background" Value="{DynamicResource ActionKeyBackground}" />
+            </Trigger>
+            <Trigger Property="KeyKind" Value="{x:Static k:KeyKind.Lock}">
+              <Setter TargetName="Root" Property="Background" Value="{DynamicResource ActionKeyBackground}" />
+            </Trigger>
+            <Trigger Property="KeyKind" Value="{x:Static k:KeyKind.Command}">
+              <Setter TargetName="Root" Property="Background" Value="{DynamicResource CommandKeyBackground}" />
+              <Setter Property="Foreground" Value="{DynamicResource CommandKeyForeground}" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Root" Property="Background" Value="{DynamicResource KeyHover}" />
+            </Trigger>
+            <Trigger Property="IsLatched" Value="True">
+              <Setter TargetName="Root" Property="Background" Value="{DynamicResource LatchedBackground}" />
+              <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            </Trigger>
+            <Trigger Property="IsLocked" Value="True">
+              <Setter TargetName="Root" Property="Background" Value="{DynamicResource LockedBackground}" />
+              <Setter Property="Foreground" Value="{DynamicResource LockedForeground}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="Root" Property="Background" Value="{DynamicResource KeyPressed}" />
+            </Trigger>
+            <Trigger Property="IsHighlighted" Value="True">
+              <Setter TargetName="Root" Property="Background" Value="{DynamicResource HighlightBackground}" />
+              <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource HighlightBorder}" />
+              <Setter TargetName="Root" Property="BorderThickness" Value="2" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- Title-bar buttons (options, minimise, close) -->
+  <Style x:Key="TitleButton" TargetType="Button">
+    <Setter Property="Width" Value="46" />
+    <Setter Property="Height" Value="30" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
+    <Setter Property="FontSize" Value="10" />
+    <Setter Property="Foreground" Value="{DynamicResource TitleForeground}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="Bg" Background="{TemplateBinding Background}">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bg" Property="Background" Value="{DynamicResource TitleButtonHover}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="TitleCloseButton" TargetType="Button" BasedOn="{StaticResource TitleButton}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="Bg" Background="{TemplateBinding Background}">
+            <ContentPresenter x:Name="Content" HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bg" Property="Background" Value="{DynamicResource TitleCloseHover}" />
+              <Setter Property="Foreground" Value="{DynamicResource TitleCloseHoverForeground}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- Word prediction chips -->
+  <Style x:Key="PredictionButton" TargetType="Button">
+    <Setter Property="Margin" Value="2" />
+    <Setter Property="Padding" Value="10,4" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+    <Setter Property="Foreground" Value="{DynamicResource PredictionForeground}" />
+    <Setter Property="Background" Value="{DynamicResource PredictionBackground}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bg" Property="Background" Value="{DynamicResource PredictionHover}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+</ResourceDictionary>

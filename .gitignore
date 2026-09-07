@@ -20,3 +20,10 @@ $RECYCLE.BIN/
 *.log
 tmp/
 scratch/
+
+# .NET build output (open-osk)
+bin/
+obj/
+publish/
+*.user
+TestResults/

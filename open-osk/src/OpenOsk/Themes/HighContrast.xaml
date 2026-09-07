@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- High contrast: system colours so the keyboard follows the user's chosen contrast theme -->
+  <SolidColorBrush x:Key="WindowBackground" Color="{x:Static SystemColors.WindowColor}" />
+  <SolidColorBrush x:Key="TitleBackground" Color="{x:Static SystemColors.ActiveCaptionColor}" />
+  <SolidColorBrush x:Key="TitleForeground" Color="{x:Static SystemColors.ActiveCaptionTextColor}" />
+  <SolidColorBrush x:Key="TitleButtonHover" Color="{x:Static SystemColors.HighlightColor}" />
+  <SolidColorBrush x:Key="TitleCloseHover" Color="{x:Static SystemColors.HighlightColor}" />
+  <SolidColorBrush x:Key="TitleCloseHoverForeground" Color="{x:Static SystemColors.HighlightTextColor}" />
+
+  <SolidColorBrush x:Key="KeyBackground" Color="{x:Static SystemColors.ControlColor}" />
+  <SolidColorBrush x:Key="KeyForeground" Color="{x:Static SystemColors.ControlTextColor}" />
+  <SolidColorBrush x:Key="KeyBorder" Color="{x:Static SystemColors.ControlTextColor}" />
+  <SolidColorBrush x:Key="KeyHover" Color="{x:Static SystemColors.HighlightColor}" />
+  <SolidColorBrush x:Key="KeyPressed" Color="{x:Static SystemColors.HighlightColor}" />
+  <SolidColorBrush x:Key="ActionKeyBackground" Color="{x:Static SystemColors.ControlColor}" />
+  <SolidColorBrush x:Key="CommandKeyBackground" Color="{x:Static SystemColors.ControlColor}" />
+  <SolidColorBrush x:Key="CommandKeyForeground" Color="{x:Static SystemColors.ControlTextColor}" />
+
+  <SolidColorBrush x:Key="AccentBrush" Color="{x:Static SystemColors.HighlightColor}" />
+  <SolidColorBrush x:Key="LatchedBackground" Color="{x:Static SystemColors.HighlightColor}" />
+  <SolidColorBrush x:Key="LockedBackground" Color="{x:Static SystemColors.HighlightColor}" />
+  <SolidColorBrush x:Key="LockedForeground" Color="{x:Static SystemColors.HighlightTextColor}" />
+  <SolidColorBrush x:Key="HighlightBackground" Color="{x:Static SystemColors.HighlightColor}" />
+  <SolidColorBrush x:Key="HighlightBorder" Color="{x:Static SystemColors.HighlightTextColor}" />
+
+  <SolidColorBrush x:Key="PredictionBackground" Color="{x:Static SystemColors.ControlColor}" />
+  <SolidColorBrush x:Key="PredictionForeground" Color="{x:Static SystemColors.ControlTextColor}" />
+  <SolidColorBrush x:Key="PredictionHover" Color="{x:Static SystemColors.HighlightColor}" />
+</ResourceDictionary>

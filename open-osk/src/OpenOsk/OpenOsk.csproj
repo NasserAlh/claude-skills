@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>OpenOsk</RootNamespace>
+    <AssemblyName>OpenOSK</AssemblyName>
+    <AssemblyTitle>OpenOSK</AssemblyTitle>
+    <Description>Open-source on-screen keyboard for Windows. No telemetry, no hooks, no freezes.</Description>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <StartupObject>OpenOsk.App</StartupObject>
+    <!-- Lets the project compile on Linux/macOS CI runners; it still only runs on Windows. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <!-- 64-bit only: the interop layer uses GetWindowLongPtr/SetWindowLongPtr. -->
+    <Platforms>AnyCPU</Platforms>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <DebugType>embedded</DebugType>
+    <UseAppHost>true</UseAppHost>
+    <NoWarn>$(NoWarn);SYSLIB1054</NoWarn>
+  </PropertyGroup>
+
+  <!-- Publish defaults (dotnet publish -r win-x64): one self-contained exe, no installer, no runtime download. -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <PublishDocumentationFiles>false</PublishDocumentationFiles>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The WPF SDK leaves System.IO out of the implicit usings. -->
+    <Using Include="System.IO" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenOsk.Core\OpenOsk.Core.csproj" />
+  </ItemGroup>
+
+</Project>

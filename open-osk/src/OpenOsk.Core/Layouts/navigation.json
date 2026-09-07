@@ -1,0 +1,48 @@
+{
+  "id": "navigation",
+  "name": "Navigation keys",
+  "rows": [
+    [
+      { "vk": "Tab", "w": 1.5 },
+      { "vk": "Escape", "label": "Esc" },
+      { "vk": "Home" },
+      { "vk": "Up" },
+      { "vk": "Prior" },
+      { "vk": "Back", "label": "Bksp", "w": 1.5 }
+    ],
+    [
+      { "id": "nav-ctrl", "mod": "Control", "vk": "LControl", "w": 1.5 },
+      { "vk": "Delete" },
+      { "vk": "Left" },
+      { "vk": "Down" },
+      { "vk": "Right" },
+      { "vk": "Return", "label": "Enter", "w": 1.5 }
+    ],
+    [
+      { "id": "nav-alt", "mod": "Alt", "vk": "LMenu", "w": 1.5 },
+      { "vk": "Insert" },
+      { "vk": "End" },
+      { "vk": "Space", "label": "Space" },
+      { "vk": "Next" },
+      { "vk": "Apps", "label": "Menu", "w": 1.5 }
+    ],
+    [
+      { "id": "nav-shift", "mod": "Shift", "vk": "LShift", "w": 1.5 },
+      { "id": "nav-win", "mod": "Win", "vk": "LWin" },
+      { "vk": "F1" }, { "vk": "F2" }, { "vk": "F3" }, { "vk": "F4" }, { "vk": "F5" }, { "vk": "F6" }
+    ],
+    [
+      { "vk": "Capital", "label": "Caps", "w": 1.5 },
+      { "vk": "F7" }, { "vk": "F8" }, { "vk": "F9" }, { "vk": "F10" }, { "vk": "F11" }, { "vk": "F12" },
+      { "cmd": "Options" },
+      { "cmd": "Help" }
+    ]
+  ],
+  "commands": [
+    [ { "cmd": "General" } ],
+    [ { "cmd": "MoveUp" } ],
+    [ { "cmd": "MoveDown" } ],
+    [ { "cmd": "Dock" } ],
+    [ { "cmd": "Fade" } ]
+  ]
+}

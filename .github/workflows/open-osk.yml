@@ -1,0 +1,92 @@
+name: OpenOSK
+
+on:
+  push:
+    branches: [main]
+    paths: ["open-osk/**", ".github/workflows/open-osk.yml"]
+    tags: ["osk-v*"]
+  pull_request:
+    paths: ["open-osk/**", ".github/workflows/open-osk.yml"]
+  workflow_dispatch:
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+
+defaults:
+  run:
+    working-directory: open-osk
+
+jobs:
+  test:
+    name: Core tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet restore
+      - run: dotnet build --no-restore -c Release
+      - run: dotnet test tests/OpenOsk.Core.Tests --no-build -c Release --logger "trx;LogFileName=results.trx"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}
+          path: open-osk/tests/OpenOsk.Core.Tests/TestResults/*.trx
+
+  publish:
+    name: Publish ${{ matrix.rid }}
+    needs: test
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        rid: [win-x64, win-arm64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Publish self-contained single file
+        run: dotnet publish src/OpenOsk/OpenOsk.csproj -c Release -r ${{ matrix.rid }} -o publish/${{ matrix.rid }}
+      - name: Checksum
+        shell: pwsh
+        run: Get-FileHash publish/${{ matrix.rid }}/OpenOSK.exe -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  OpenOSK-${{ matrix.rid }}.exe" } | Set-Content publish/${{ matrix.rid }}/OpenOSK-${{ matrix.rid }}.exe.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenOSK-${{ matrix.rid }}
+          path: |
+            open-osk/publish/${{ matrix.rid }}/OpenOSK.exe
+            open-osk/publish/${{ matrix.rid }}/OpenOSK-${{ matrix.rid }}.exe.sha256
+
+  release:
+    name: GitHub release
+    if: startsWith(github.ref, 'refs/tags/osk-v')
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Rename per architecture
+        working-directory: artifacts
+        run: |
+          for rid in win-x64 win-arm64; do
+            mv "OpenOSK-$rid/OpenOSK.exe" "OpenOSK-$rid.exe"
+            mv "OpenOSK-$rid/OpenOSK-$rid.exe.sha256" "OpenOSK-$rid.exe.sha256"
+          done
+          ls -la
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/OpenOSK-win-x64.exe
+            artifacts/OpenOSK-win-x64.exe.sha256
+            artifacts/OpenOSK-win-arm64.exe
+            artifacts/OpenOSK-win-arm64.exe.sha256
+          generate_release_notes: true

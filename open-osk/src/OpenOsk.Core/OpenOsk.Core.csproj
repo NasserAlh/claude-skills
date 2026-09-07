@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>OpenOsk.Core</RootNamespace>
+    <Description>Platform-independent keyboard model, modifier logic, typing modes, prediction and settings for OpenOSK.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Layouts\*.json" LogicalName="OpenOsk.Core.Layouts.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Lexicons\*.txt" LogicalName="OpenOsk.Core.Lexicons.%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>
