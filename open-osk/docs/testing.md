@@ -38,7 +38,7 @@ Only if a second keyboard layout is installed (Settings → Time & language → 
 
 - [ ] 2.1 Switch Notepad's input language with Win+Space. Within a second the OpenOSK labels change to the new layout (for example `q`→`a` on AZERTY, `y`↔`z` on QWERTZ).
 - [ ] 2.2 Typing produces the characters shown on the keys, not the US ones.
-- [ ] 2.3 On a layout with dead keys (e.g. US-International), the dead key shows the accent, and pressing it then a vowel produces the accented letter.
+- [ ] 2.3 On a layout with dead keys (e.g. US-International), tapping the dead key then a vowel produces the accented letter (`'` `e` → `é`) and the dead key then Space produces the bare character. The key shows what the layout reports for the dead key on its own: `'` on US-International, `´` on German.
 
 ## 3. Numeric key pad
 

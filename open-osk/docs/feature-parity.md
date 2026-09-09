@@ -56,7 +56,8 @@ by design, ❌ not implemented.
   unless the sender is also elevated or has UI Access (which needs a code-signed binary in
   Program Files). Run OpenOSK as administrator when you need to type into such a window.
 - **Sign-in screen and UAC prompts.** Only the built-in keyboard can run there.
-- **Dead keys** are shown on the key (e.g. `´`) and are sent as the real key, so composing
-  accented characters works exactly as on a physical keyboard for that layout.
+- **Dead keys** are shown on the key as the character the layout reports for the dead key alone
+  (`´` on German, `'` on US-International) and are sent as the real key, so composing accented
+  characters works exactly as on a physical keyboard for that layout.
 - **Predictions are not scanned** in scan mode; use the mouse for them.
 - **32-bit Windows** is not supported. Builds are provided for x64 and Arm64.
