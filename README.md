@@ -3,6 +3,10 @@
 Claude Code skills I use on my own projects, published in case they are useful to
 anyone else. Currently one skill: **gate-board**.
 
+This repository also hosts **[OpenOSK](open-osk/README.md)**, an open-source on-screen
+keyboard for Windows with the features of the built-in one and none of its telemetry or
+freezes. It lives in `open-osk/` and has its own README, docs and CI workflow.
+
 ---
 
 ## gate-board
