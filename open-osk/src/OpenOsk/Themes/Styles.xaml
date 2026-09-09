@@ -26,13 +26,18 @@
                   BorderThickness="{TemplateBinding BorderThickness}"
                   CornerRadius="4">
             <Grid ClipToBounds="True">
-              <TextBlock Text="{TemplateBinding Label}"
-                         HorizontalAlignment="Center"
-                         VerticalAlignment="Center"
-                         FontSize="{TemplateBinding FontSize}"
-                         TextTrimming="CharacterEllipsis"
-                         TextAlignment="Center" />
-              <TextBlock Text="{TemplateBinding SubLabel}"
+              <!-- Long labels (Options, PrtScn, Mv Up) shrink to fit narrow keys instead of being cut to "Op..." -->
+              <Viewbox Stretch="Uniform"
+                       StretchDirection="DownOnly"
+                       Margin="5,2"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center">
+                <TextBlock Text="{TemplateBinding Label}"
+                           FontSize="{TemplateBinding FontSize}"
+                           TextAlignment="Center" />
+              </Viewbox>
+              <TextBlock x:Name="Sub"
+                         Text="{TemplateBinding SubLabel}"
                          HorizontalAlignment="Right"
                          VerticalAlignment="Top"
                          Margin="0,1,5,0"
@@ -53,6 +58,9 @@
             </Grid>
           </Border>
           <ControlTemplate.Triggers>
+            <Trigger Property="ShowSubLabel" Value="False">
+              <Setter TargetName="Sub" Property="Visibility" Value="Collapsed" />
+            </Trigger>
             <Trigger Property="KeyKind" Value="{x:Static k:KeyKind.Action}">
               <Setter TargetName="Root" Property="Background" Value="{DynamicResource ActionKeyBackground}" />
             </Trigger>

@@ -11,15 +11,12 @@ internal static class NativeMethods
     public const int GWL_EXSTYLE = -20;
     public const long WS_EX_NOACTIVATE = 0x08000000L;
     public const long WS_EX_TOPMOST = 0x00000008L;
-    public const long WS_EX_LAYERED = 0x00080000L;
     public const long WS_EX_APPWINDOW = 0x00040000L;
 
     public const int WM_MOUSEACTIVATE = 0x0021;
     public const int WM_HOTKEY = 0x0312;
     public const int WM_DPICHANGED = 0x02E0;
     public const int MA_NOACTIVATE = 3;
-
-    public const uint LWA_ALPHA = 0x2;
 
     public const uint INPUT_KEYBOARD = 1;
     public const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
@@ -83,6 +80,13 @@ internal static class NativeMethods
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    public struct POINT
+    {
+        public int X;
+        public int Y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     public struct RECT
     {
         public int Left;
@@ -124,10 +128,6 @@ internal static class NativeMethods
     [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
     public static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
-    [DllImport("user32.dll", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
-
     [DllImport("user32.dll")]
     public static extern short GetKeyState(int nVirtKey);
 
@@ -136,6 +136,10 @@ internal static class NativeMethods
 
     [DllImport("user32.dll")]
     public static extern IntPtr GetForegroundWindow();
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetCursorPos(out POINT lpPoint);
 
     [DllImport("user32.dll", SetLastError = true)]
     public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);

@@ -21,32 +21,6 @@ internal static class WindowHelper
         NativeMethods.SetWindowLongPtr(hwnd, NativeMethods.GWL_EXSTYLE, new IntPtr(style));
     }
 
-    /// <summary>Sets whole-window opacity through a layered window, which works without AllowsTransparency.</summary>
-    public static void SetOpacity(Window window, double opacity)
-    {
-        var hwnd = Handle(window);
-        if (hwnd == IntPtr.Zero)
-        {
-            return;
-        }
-
-        var style = NativeMethods.GetWindowLongPtr(hwnd, NativeMethods.GWL_EXSTYLE).ToInt64();
-        if (opacity >= 0.999)
-        {
-            NativeMethods.SetLayeredWindowAttributes(hwnd, 0, 255, NativeMethods.LWA_ALPHA);
-            NativeMethods.SetWindowLongPtr(hwnd, NativeMethods.GWL_EXSTYLE, new IntPtr(style & ~NativeMethods.WS_EX_LAYERED));
-            return;
-        }
-
-        if ((style & NativeMethods.WS_EX_LAYERED) == 0)
-        {
-            NativeMethods.SetWindowLongPtr(hwnd, NativeMethods.GWL_EXSTYLE, new IntPtr(style | NativeMethods.WS_EX_LAYERED));
-        }
-
-        var alpha = (byte)Math.Clamp(Math.Round(opacity * 255), 1, 255);
-        NativeMethods.SetLayeredWindowAttributes(hwnd, 0, alpha, NativeMethods.LWA_ALPHA);
-    }
-
     /// <summary>Device-pixels-per-DIP scale of the monitor the window is on.</summary>
     public static (double X, double Y) DpiScale(Window window)
     {

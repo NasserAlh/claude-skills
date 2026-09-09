@@ -4,7 +4,7 @@ OpenOSK is a WPF application on .NET 8 with a deliberately thin Windows layer ov
 platform-independent core.
 
 ```
-open-osk/
+OpenOSK/
 ├── src/OpenOsk.Core/        net8.0 class library, no Windows dependency, fully unit-tested
 │   ├── Keys/                VirtualKey codes, KeyDefinition, KeyKind, OskCommand, ModifierKey
 │   ├── Layout/              KeyboardLayout model, JSON LayoutParser, BuiltInLayouts

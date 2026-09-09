@@ -9,7 +9,10 @@ namespace OpenOsk.Core.Input;
 /// </summary>
 public static class KeyStrokePlanner
 {
-    public static KeyStrokePlan Plan(KeyDefinition key, ModifierController modifiers)
+    /// <param name="key">The activated key.</param>
+    /// <param name="modifiers">Sticky-modifier state; latched and locked modifiers wrap the key.</param>
+    /// <param name="numLock">Current Num Lock state. While off, numeric-pad keys send their navigation twins.</param>
+    public static KeyStrokePlan Plan(KeyDefinition key, ModifierController modifiers, bool numLock = true)
     {
         ArgumentNullException.ThrowIfNull(key);
         ArgumentNullException.ThrowIfNull(modifiers);
@@ -25,6 +28,18 @@ public static class KeyStrokePlanner
         {
             vk = key.FnVirtualKey;
             extended = VirtualKeyInfo.IsExtended(vk);
+        }
+
+        if (!numLock)
+        {
+            // Windows applies Num Lock to physical scan codes, not to injected virtual keys, so a
+            // numpad key must be sent as the navigation key a real keyboard would produce.
+            var alternate = VirtualKeyInfo.NumLockOffKey(vk);
+            if (alternate != VirtualKey.None)
+            {
+                vk = alternate;
+                extended = false;
+            }
         }
 
         if (vk == VirtualKey.None)

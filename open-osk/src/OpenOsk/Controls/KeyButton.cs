@@ -37,6 +37,12 @@ public sealed class KeyButton : Control
     public static readonly DependencyProperty SubFontSizeProperty =
         DependencyProperty.Register(nameof(SubFontSize), typeof(double), typeof(KeyButton), new PropertyMetadata(8.0));
 
+    public static readonly DependencyProperty ShowSubLabelProperty =
+        DependencyProperty.Register(nameof(ShowSubLabel), typeof(bool), typeof(KeyButton), new PropertyMetadata(true));
+
+    /// <summary>Below this main font size the corner label would collide with the main label, so it is hidden.</summary>
+    public const double MinFontSizeForSubLabel = 13.0;
+
     static KeyButton()
     {
         DefaultStyleKeyProperty.OverrideMetadata(typeof(KeyButton), new FrameworkPropertyMetadata(typeof(KeyButton)));
@@ -108,11 +114,20 @@ public sealed class KeyButton : Control
         set => SetValue(SubFontSizeProperty, value);
     }
 
+    /// <summary>Whether the corner label is drawn; false when the key is too small for two labels.</summary>
+    public bool ShowSubLabel
+    {
+        get => (bool)GetValue(ShowSubLabelProperty);
+        set => SetValue(ShowSubLabelProperty, value);
+    }
+
     private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is KeyButton button)
         {
-            button.SubFontSize = Math.Max(7.0, (double)e.NewValue * 0.55);
+            var size = (double)e.NewValue;
+            button.SubFontSize = Math.Max(7.0, size * 0.55);
+            button.ShowSubLabel = size >= MinFontSizeForSubLabel;
         }
     }
 }

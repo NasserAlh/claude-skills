@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Threading;
 using OpenOsk.Controls;
 using OpenOsk.Core.Input;
@@ -34,6 +35,7 @@ public partial class MainWindow : Window
     private readonly LearnedWordsStore _learnedStore = new(AppPaths.LearnedWordsFile);
     private readonly DwellTracker _dwell;
     private readonly ScanController _scan = new();
+    private readonly KeyRepeater _repeater = new(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(33));
     private readonly Stopwatch _clock = Stopwatch.StartNew();
     private readonly DispatcherTimer _dwellTimer;
     private readonly DispatcherTimer _scanTimer;
@@ -52,8 +54,8 @@ public partial class MainWindow : Window
     private GlobalHotKey? _hotKey;
     private AppBar? _appBar;
     private KeyButton? _pressedButton;
+    private KeyButton? _dwellSuppressed;
     private KeyStrokePlan? _pressedPlan;
-    private bool _repeatDelayPassed;
     private bool _faded;
     private bool _pointerOver;
     private bool _docked;
@@ -77,7 +79,8 @@ public partial class MainWindow : Window
         _dwellTimer.Tick += OnDwellTick;
         _scanTimer = new DispatcherTimer(DispatcherPriority.Normal, Dispatcher) { Interval = TimeSpan.FromSeconds(settings.ScanSeconds) };
         _scanTimer.Tick += (_, _) => _scan.Tick();
-        _repeatTimer = new DispatcherTimer(DispatcherPriority.Input, Dispatcher);
+        // Ticks faster than any repeat rate; the KeyRepeater decides how many repeats each tick owes.
+        _repeatTimer = new DispatcherTimer(DispatcherPriority.Input, Dispatcher) { Interval = TimeSpan.FromMilliseconds(16) };
         _repeatTimer.Tick += OnRepeatTick;
         _saveTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher) { Interval = TimeSpan.FromSeconds(2) };
         _saveTimer.Tick += (_, _) => { _saveTimer.Stop(); SavePlacement(); SaveSettings(); SaveLearnedWords(); };
@@ -270,7 +273,7 @@ public partial class MainWindow : Window
         var unitWidth = MainBlock.ActualWidth > 0 ? MainBlock.ActualWidth / _layout.MainWidthUnits : rowHeight;
         var size = Math.Clamp(Math.Min(rowHeight * 0.36, unitWidth * 0.42), 9, 40);
         TextElement.SetFontSize(KeysHost, size);
-        TextElement.SetFontSize(PredictionBar, Math.Clamp(size * 0.8, 11, 22));
+        TextElement.SetFontSize(PredictionBar, Math.Clamp(size * 0.7, 11, 18));
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -334,7 +337,7 @@ public partial class MainWindow : Window
 
     private void OnKeyMouseEnter(object sender, MouseEventArgs e)
     {
-        if (_settings.TypingMode == TypingMode.Hover && sender is KeyButton button)
+        if (_settings.TypingMode == TypingMode.Hover && sender is KeyButton button && !ReferenceEquals(button, _dwellSuppressed))
         {
             _dwell.Enter(button.Key.Id, _clock.Elapsed);
         }
@@ -349,8 +352,38 @@ public partial class MainWindow : Window
                 _dwell.Leave();
             }
 
+            if (ReferenceEquals(button, _dwellSuppressed))
+            {
+                _dwellSuppressed = null;
+            }
+
             button.DwellProgress = 0;
         }
+    }
+
+    /// <summary>
+    /// When a dialog closes, WPF raises MouseEnter for whatever key the pointer happens to rest on,
+    /// which in hover mode would dwell-type that key (or reopen Options) a second later. Ignore that
+    /// key until the pointer leaves it.
+    /// </summary>
+    private void SuppressDwellUnderPointer()
+    {
+        _dwell.Leave();
+        _dwellSuppressed = null;
+
+        // Mouse.GetPosition is stale here (the dialog owned the pointer), so ask Win32 instead.
+        if (!NativeMethods.GetCursorPos(out var cursor))
+        {
+            return;
+        }
+
+        var hit = InputHitTest(PointFromScreen(new Point(cursor.X, cursor.Y))) as DependencyObject;
+        while (hit is not null and not KeyButton)
+        {
+            hit = VisualTreeHelper.GetParent(hit);
+        }
+
+        _dwellSuppressed = hit as KeyButton;
     }
 
     private void OnDwellTick(object? sender, EventArgs e)
@@ -418,7 +451,7 @@ public partial class MainWindow : Window
                 break;
         }
 
-        var plan = KeyStrokePlanner.Plan(key, _modifiers);
+        var plan = KeyStrokePlanner.Plan(key, _modifiers, numLock: _monitor?.NumLock ?? true);
         if (plan.Press.Count == 0)
         {
             return;
@@ -432,8 +465,9 @@ public partial class MainWindow : Window
 
         if (_settings.KeyRepeat && plan.Repeat.Count > 0)
         {
-            _repeatDelayPassed = false;
-            _repeatTimer.Interval = RepeatDelay();
+            _repeater.Delay = RepeatDelay();
+            _repeater.Interval = RepeatInterval();
+            _repeater.Start(_clock.Elapsed);
             _repeatTimer.Start();
         }
     }
@@ -441,6 +475,7 @@ public partial class MainWindow : Window
     private void ReleaseKey()
     {
         _repeatTimer.Stop();
+        _repeater.Stop();
         if (_pressedButton is null)
         {
             return;
@@ -483,17 +518,25 @@ public partial class MainWindow : Window
         if (_pressedButton is null || _pressedPlan is null)
         {
             _repeatTimer.Stop();
+            _repeater.Stop();
             return;
         }
 
-        if (!_repeatDelayPassed)
+        var due = _repeater.Due(_clock.Elapsed);
+        if (due == 0)
         {
-            _repeatDelayPassed = true;
-            _repeatTimer.Interval = RepeatInterval();
+            return;
         }
 
-        TrackTyping(_pressedButton.Key);
-        _injector.Send(_pressedPlan.Repeat);
+        // Late ticks owe more than one repeat; send them as one batch so they cannot interleave.
+        var strokes = new List<KeyStroke>(due * _pressedPlan.Repeat.Count);
+        for (var i = 0; i < due; i++)
+        {
+            TrackTyping(_pressedButton.Key);
+            strokes.AddRange(_pressedPlan.Repeat);
+        }
+
+        _injector.Send(strokes);
     }
 
     /// <summary>Initial auto-repeat delay from the user's Windows keyboard settings (250 ms to 1 s).</summary>
@@ -708,6 +751,7 @@ public partial class MainWindow : Window
         {
             _predictor.Learn(word);
             _learnedDirty = true;
+            ScheduleSave();
         }
     }
 
@@ -923,8 +967,9 @@ public partial class MainWindow : Window
 
     private void ApplyOpacity()
     {
-        var opacity = _faded && !_pointerOver ? _settings.FadeOpacity : 1.0;
-        WindowHelper.SetOpacity(this, opacity);
+        // WPF strips WS_EX_LAYERED from any window that does not use per-pixel opacity, so
+        // SetLayeredWindowAttributes cannot fade this window; AllowsTransparency plus Opacity can.
+        Opacity = _faded && !_pointerOver ? _settings.FadeOpacity : 1.0;
     }
 
     private void ShowOptions()
@@ -949,6 +994,8 @@ public partial class MainWindow : Window
 
             ApplySettings(save: true);
         }
+
+        SuppressDwellUnderPointer();
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -172,4 +172,24 @@ public static class VirtualKeyInfo
     public static bool IsDigit(VirtualKey key) => key >= VirtualKey.D0 && key <= VirtualKey.D9;
 
     public static bool IsNumPad(VirtualKey key) => key >= VirtualKey.NumPad0 && key <= VirtualKey.Divide;
+
+    /// <summary>
+    /// What a numeric-pad key produces while Num Lock is off (NumPad7 → Home, Decimal → Delete, ...),
+    /// or <see cref="VirtualKey.None"/> for keys Num Lock does not affect.
+    /// </summary>
+    public static VirtualKey NumLockOffKey(VirtualKey key) => key switch
+    {
+        VirtualKey.NumPad0 => VirtualKey.Insert,
+        VirtualKey.NumPad1 => VirtualKey.End,
+        VirtualKey.NumPad2 => VirtualKey.Down,
+        VirtualKey.NumPad3 => VirtualKey.Next,
+        VirtualKey.NumPad4 => VirtualKey.Left,
+        VirtualKey.NumPad5 => VirtualKey.Clear,
+        VirtualKey.NumPad6 => VirtualKey.Right,
+        VirtualKey.NumPad7 => VirtualKey.Home,
+        VirtualKey.NumPad8 => VirtualKey.Up,
+        VirtualKey.NumPad9 => VirtualKey.Prior,
+        VirtualKey.Decimal => VirtualKey.Delete,
+        _ => VirtualKey.None,
+    };
 }

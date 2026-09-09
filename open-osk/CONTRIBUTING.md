@@ -26,7 +26,7 @@ The WPF project builds on Linux and macOS too (`EnableWindowsTargeting` is set) 
 solution can be compiled and the core tested without a Windows machine. Running the app needs
 Windows 10 1809 or later.
 
-Warnings are errors. The `.editorconfig` in `open-osk/` defines formatting; `dotnet format` will
+Warnings are errors. The `.editorconfig` defines formatting; `dotnet format` will
 apply it.
 
 ## Pull requests

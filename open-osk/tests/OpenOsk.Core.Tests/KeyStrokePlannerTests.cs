@@ -56,6 +56,27 @@ public class KeyStrokePlannerTests
     }
 
     [Fact]
+    public void NumPadKeysBecomeNavigationKeysWhileNumLockIsOff()
+    {
+        var seven = Key(VirtualKey.NumPad7);
+        Assert.Equal([KeyStroke.Down(VirtualKey.NumPad7)], KeyStrokePlanner.Plan(seven, new ModifierController(), numLock: true).Press);
+
+        var plan = KeyStrokePlanner.Plan(seven, new ModifierController(), numLock: false);
+        Assert.Equal([KeyStroke.Down(VirtualKey.Home)], plan.Press);
+        Assert.Equal([KeyStroke.Up(VirtualKey.Home)], plan.Release);
+        Assert.Equal([KeyStroke.Down(VirtualKey.Home)], plan.Repeat);
+        Assert.Equal([KeyStroke.Down(VirtualKey.Delete)], KeyStrokePlanner.Plan(Key(VirtualKey.Decimal), new ModifierController(), numLock: false).Press);
+    }
+
+    [Fact]
+    public void NumLockDoesNotAffectOtherKeys()
+    {
+        Assert.Equal([KeyStroke.Down(VirtualKey.A)], KeyStrokePlanner.Plan(Key(VirtualKey.A), new ModifierController(), numLock: false).Press);
+        Assert.Equal([KeyStroke.Down(VirtualKey.Home, extended: true)], KeyStrokePlanner.Plan(Key(VirtualKey.Home), new ModifierController(), numLock: false).Press);
+        Assert.Equal([KeyStroke.Down(VirtualKey.Add)], KeyStrokePlanner.Plan(Key(VirtualKey.Add), new ModifierController(), numLock: false).Press);
+    }
+
+    [Fact]
     public void ExtendedKeysCarryTheFlag()
     {
         var plan = KeyStrokePlanner.Plan(Key(VirtualKey.Left), new ModifierController());
